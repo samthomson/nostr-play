@@ -9,7 +9,7 @@ const App = () => {
 		signer: nip07signer,
 	})
 
-	const [foundEvents, setFoundEvents] = React.useState<NDKUtil.NDKEvent[]>([])
+	const [following, setFollowing] = React.useState<NDKUtil.NDKTag[]>([])
 
 	const connect = async () => {
 		// get the user from the browser extension - if we can
@@ -22,12 +22,16 @@ const App = () => {
 			await ndk.connect()
 
 			const filter = {
-				kinds: [1],
+				kinds: [3],
 				authors: [hexUser as string],
 			}
 
 			const events = await ndk.fetchEvents(filter)
-			setFoundEvents(Array.from(events))
+			console.log(events)
+			const following = Array.from(events)[0].tags
+			console.log("tags", following)
+
+			setFollowing(following)
 		}
 	}
 
@@ -42,12 +46,17 @@ const App = () => {
 		<>
 			[todo]
 			<br />
-			{foundEvents.length}
+			{following.length}
 			<br />
 			<ul>
-				{foundEvents.map((event, key) => (
-					<li key={key}>{event.content}</li>
-				))}
+				{following.map((event, key) => {
+					const [p, hex, relay] = event
+					return (
+						<li key={key}>
+							{hex} {!!relay && <>{relay}</>}
+						</li>
+					)
+				})}
 			</ul>
 		</>
 	)
