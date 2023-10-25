@@ -5,6 +5,7 @@ import NDK, * as NDKUtil from "@nostr-dev-kit/ndk"
 
 type UserData = {
 	hex: string
+	npub: string
 	name: string | undefined
 	image: string | undefined
 	website: string | undefined
@@ -70,6 +71,7 @@ const useData = (): UserData[] => {
 
 			const userData: UserData = {
 				hex,
+				npub: user.npub,
 				name: user.profile?.name,
 				image: user.profile?.image,
 				website: user.profile?.website,

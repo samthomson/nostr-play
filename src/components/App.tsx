@@ -18,9 +18,10 @@ const App = () => {
 			<br />
 			{userData.length}
 			<br />
-			<ul>
+			<ol>
 				{userData.map((event, key) => {
-					const { hex, name, image, website } = event
+					const { hex, name, image, website, npub } = event
+					const stream = `https://primal.net/p/${npub}`
 					return (
 						<li key={key}>
 							{hex} {!!name && `(${name})`}{" "}
@@ -30,11 +31,14 @@ const App = () => {
 								</a>
 							)}
 							<img src={image} height={20} width={20} />
+							<a href={stream} target="_blank" rel="noreferrer">
+								stream
+							</a>
 							<hr />
 						</li>
 					)
 				})}
-			</ul>
+			</ol>
 		</>
 	)
 }
