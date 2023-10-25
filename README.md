@@ -24,3 +24,4 @@ It's just a simple react app:
 - deploy
 - mute list
 - some kind of [local?] cache
+- basic indexing/search
