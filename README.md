@@ -25,3 +25,4 @@ It's just a simple react app:
 - mute list
 - some kind of [local?] cache
 - basic indexing/search
+- make links without protocol work (prepend protocol)
