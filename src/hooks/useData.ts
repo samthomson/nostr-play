@@ -1,23 +1,32 @@
-import React from "react"
+import * as React from "react"
+
 import * as NostrTools from "nostr-tools"
 import NDK, * as NDKUtil from "@nostr-dev-kit/ndk"
 
 type UserData = {
+	hex: string
 	name: string | undefined
 	image: string | undefined
 	website: string | undefined
 }
 
-const App = () => {
+const useData = (): UserData[] => {
+	const [following, setFollowing] = React.useState<NDKUtil.NDKTag[]>([])
+
+	const [userData, setUserData] = React.useState<Record<string, UserData>>({})
+
 	const nip07signer = new NDKUtil.NDKNip07Signer()
 	const ndk = new NDK({
 		explicitRelayUrls: ["wss://relay.damus.io", "wss://bitcoiner.social"],
 		signer: nip07signer,
 	})
 
-	const [following, setFollowing] = React.useState<NDKUtil.NDKTag[]>([])
-
-	const [userData, setUserData] = React.useState<Record<string, UserData>>({})
+	React.useEffect(() => {
+		if (ndk) {
+			// get the user via browser and find their notes from relays
+			connect()
+		}
+	}, [ndk])
 
 	const connect = async () => {
 		// get the user from the browser extension - if we can
@@ -55,12 +64,12 @@ const App = () => {
 
 			const user = ndk.getUser({
 				hexpubkey: hex,
-				// npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
 			})
 			console.log("user " + i, user)
 			await user.fetchProfile()
 
 			const userData: UserData = {
+				hex,
 				name: user.profile?.name,
 				image: user.profile?.image,
 				website: user.profile?.website,
@@ -68,36 +77,11 @@ const App = () => {
 			users[hex] = userData
 
 			console.log("user " + i + " profile:", user.profile)
+			setUserData(users)
 		}
-		setUserData(users)
 	}
 
-	React.useEffect(() => {
-		if (ndk) {
-			// get the user via browser and find their notes from relays
-			connect()
-		}
-	}, [ndk])
-
-	return (
-		<>
-			[todo]
-			<br />
-			{following.length}
-			<br />
-			<ul>
-				{following.map((event, key) => {
-					const [p, hex, relay] = event
-					return (
-						<li key={key}>
-							{hex} {!!userData?.[hex]?.name && `(${userData[hex].name})`}{" "}
-							{!!relay && <>{relay}</>}
-						</li>
-					)
-				})}
-			</ul>
-		</>
-	)
+	return Object.values(userData)
 }
 
-export default App
+export default useData
